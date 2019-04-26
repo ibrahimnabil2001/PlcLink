@@ -1,0 +1,25 @@
+3/19/2019
+//        stringBuilder = new StringBuilder("received: \n");
+//
+//        if (bluetoothAdapter == null) { // check if framework returned any adapter
+//            Toast.makeText(getApplicationContext(),
+//                    "Bluetooth is not supported",Toast.LENGTH_SHORT).show();
+//        }else if (!bluetoothAdapter.isEnabled()) { //if bluetooth is not enabled ask the user to enable it
+//            Intent enableAdapter = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableAdapter, 0); }
+//
+//        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+//
+//        if(bondedDevices.isEmpty()) { // check if any device is paired
+//            Toast.makeText(getApplicationContext(),"Please Pair the Device first",Toast.LENGTH_SHORT).show();
+//        } else {
+//
+//            for (BluetoothDevice iterator : bondedDevices) {
+//
+//                String deviceName = iterator.getName(); //getDevice Nmae
+//                if(deviceName.equals(DEVICE_NAME)){
+//                    connectToDevice(iterator);
+//                    break;
+//                }
+//            } }
+

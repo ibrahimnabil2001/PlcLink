@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/text_tag_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/header_padding"
+        android:textAppearance="@style/HeaderText"
+        tools:text = "Tag Name here"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/text_tag_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/sub_header_padding"
+            android:textAppearance="@style/SubHeaderText"
+            tools:text = "Tag Address here"/>
+
+        <TextView
+            android:id="@+id/text_tag_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/sub_header_padding"
+            android:textAppearance="@style/SubHeaderText"
+            tools:text = "Tag Value"/>
+
+        <TextView
+            android:id="@+id/text_tag_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/sub_header_padding"
+            android:textAppearance="@style/SubHeaderText"
+            tools:text = "Tag type"/>
+
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/discrete_visualization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
+        <LinearLayout
+            android:id="@+id/bits_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/sub_header_padding"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <RelativeLayout
+        android:id="@+id/analog_visualization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
+        <ProgressBar
+            android:id="@+id/analog_bar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:indeterminate="false"
+            android:max="100"
+
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_margin="@dimen/sub_header_padding"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/scaled_value_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="25 psi"
+            android:layout_margin="@dimen/sub_header_padding"
+            android:textSize="@dimen/sub_header_text"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+
+</LinearLayout>

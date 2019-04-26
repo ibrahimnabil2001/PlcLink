@@ -1,0 +1,16 @@
+
+<resources>
+
+    <!-- Common text size values used throughout the app -->
+    <dimen name="headerTextSize">24sp</dimen>
+    <dimen name="sub_header_text">18sp</dimen>
+
+    <!-- Common margin value used throughout the app -->
+    <dimen name="header_padding">8dp</dimen>
+    <dimen name="sub_header_padding">8dp</dimen>
+    <dimen name="list_item_height">88dp</dimen>
+
+    <integer name="bit_square">24</integer>
+    <dimen name="bitView_text_size">14sp</dimen>
+</resources>
+
