@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New System"
+        android:gravity="center"
+        android:textAppearance="@style/HeaderText"
+        android:id="@+id/new_system_header"/>
+
+    <ImageButton
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/header_padding"
+        android:id="@+id/add_new_system_button"
+        android:background="@drawable/ic_done"
+        android:scaleType="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_new_system_button"
+        android:orientation="horizontal"
+        android:id="@+id/new_system_name_layout"
+        android:paddingStart="@dimen/sub_header_padding"
+        android:paddingEnd = "@dimen/sub_header_padding"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:text="System Name :"
+            android:textAppearance="@style/SubHeaderText"
+            />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_system_name_edit"
+            android:hint="Fire pump # A"
+            android:textSize="@dimen/sub_header_text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/new_system_location_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/new_system_name_layout"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/sub_header_padding"
+        android:paddingEnd = "@dimen/sub_header_padding"
+      >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:text="System Location :"
+            android:textAppearance="@style/SubHeaderText"
+            />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_system_location_edit"
+            android:hint="j#10 - G/L Cellar"
+            android:textSize="@dimen/sub_header_text"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/new_system_location_layout"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/sub_header_padding"
+        android:paddingEnd = "@dimen/sub_header_padding"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:text="PLC type :"
+            android:textAppearance="@style/SubHeaderText"
+            />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:id="@+id/new_system_plcType_edit"
+            android:hint="j#10 - G/L Cellar"
+            android:textSize="@dimen/sub_header_text"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
