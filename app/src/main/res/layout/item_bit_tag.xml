@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+<LinearLayout
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+
+
+    <EditText
+        android:id="@+id/bit_name_editText"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/header_padding"
+        android:textAppearance="@style/HeaderText"
+        tools:text = "Tag Name here"/>
+
+    <TextView
+        android:id="@+id/bit_index_text"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/sub_header_padding"
+        android:textAppearance="@style/SubHeaderText"
+        />
+
+
+</LinearLayout>
+
+    </RelativeLayout>

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Plc Link</string>
+
+    <!--New system dialog strings-->
+    <string name="new_system_title">New System</string>
+    <string name="system_name_hint">System Name</string>
+    <string name="system_location_hint">System Location</string>
+    <string name="add_button">Add</string>
+    <string name="cancel_button">Cancel</string>
 </resources>

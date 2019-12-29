@@ -23,7 +23,9 @@ public class BluetoothService {
     private static final String TAG = "MY_APP_DEBUG_TAG";
     private static Handler handler; // handler that handles data between bluetooth service class and UI-thread
     private static BluetoothSocket mmSocket;
-    private static OutputStream mmOutStream = null; //to be used within send method
+    private static OutputStream mmOutStream = null;
+    private static InputStream mmInStream = null;
+    protected static boolean isConnected = false;
 
     // Defines several constants used when transmitting messages between the
     // service and the UI.
@@ -89,12 +91,25 @@ public class BluetoothService {
                 return;
             }
 
+            // Get the input and output streams; using temp objects because
+            // member streams are final.
+            try {
+                mmInStream = mmSocket.getInputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "Error occurred when creating input stream", e);
+            }
+            try {
+                mmOutStream = mmSocket.getOutputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "Error occurred when creating output stream", e);
+            }
+
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
             // By sending message to Ui thread handler containing Connected socket.
+            isConnected = true;
             Message connectedMessage = new Message();
             connectedMessage.what = MessageType.CONNECTED;
-            connectedMessage.obj = mmSocket;
             handler.sendMessage(connectedMessage);
         }
     }
@@ -102,25 +117,7 @@ public class BluetoothService {
 //-------------------------------------------------------------------------------------------------
     static class BtListenerThread extends Thread {
 
-        private static InputStream mmInStream = null;
-
-
-        BtListenerThread(BluetoothSocket socket) {
-
-            // Get the input and output streams; using temp objects because
-            // member streams are final.
-            try {
-                mmInStream = socket.getInputStream();
-            } catch (IOException e) {
-                Log.e(TAG, "Error occurred when creating input stream", e);
-            }
-            try {
-                mmOutStream = socket.getOutputStream();
-            } catch (IOException e) {
-                Log.e(TAG, "Error occurred when creating output stream", e);
-            }
-
-        }
+        BtListenerThread() {}
 
         @Override
         public void run() {
@@ -155,7 +152,7 @@ public class BluetoothService {
 
     // Call this from the main activity to send data to the remote device.
     public static void send(String outString) {
-
+    if(isConnected){
         try {
             mmOutStream.write(outString.getBytes());
 
@@ -172,7 +169,7 @@ public class BluetoothService {
             writeErrorMsg.setData(bundle);
             handler.sendMessage(writeErrorMsg);
         }
-    }
+    }}
 
     //find the passed device name
      static public BluetoothDevice findBTdevice(String deviceName, Activity activity){
@@ -216,6 +213,8 @@ public class BluetoothService {
     }
     // Closes the client socket.
     static public void disconnectBT() {
+
+        isConnected = false;
         //initialize bluetoothAdapter
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothAdapter.startDiscovery(); //placed before try/catch to make sure it
@@ -227,5 +226,6 @@ public class BluetoothService {
         } catch (IOException e) {
             Log.e(TAG, "Could not close the client socket", e);
         }
+
     }
 }

@@ -44,6 +44,8 @@ public class DiscreteTag extends BaseTag {
         mChildTags.get(childIndex).setName(childName);
     }
 
+    public void setChildList(ArrayList<BitTag> newList){mChildTags = newList;}
+
     public boolean getChildValue(int childIndex){
         if (childIndex < mDataSize){
             return mChildTags.get(childIndex).getValue();

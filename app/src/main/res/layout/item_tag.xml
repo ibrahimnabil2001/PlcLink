@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/text_tag_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/header_padding"
         android:textAppearance="@style/HeaderText"
@@ -47,11 +47,6 @@
 
     </LinearLayout>
 
-    <HorizontalScrollView
-        android:id="@+id/discrete_visualization"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none" >
         <LinearLayout
             android:id="@+id/bits_container"
             android:layout_width="wrap_content"
@@ -59,7 +54,6 @@
             android:layout_margin="@dimen/sub_header_padding"
             android:gravity="center_vertical"
             android:orientation="horizontal" />
-    </HorizontalScrollView>
 
     <RelativeLayout
         android:id="@+id/analog_visualization"

@@ -8,6 +8,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
         TextView tagAddressView;
         TextView tagValueView;
         TextView tagTypeView;
+        int itemIndex;
 
         private TagViewHolder(View view) {
             super(view);
@@ -35,6 +38,8 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
             tagAddressView =  view.findViewById(R.id.text_tag_address);
             tagValueView =  view.findViewById(R.id.text_tag_value);
             tagTypeView =  view.findViewById(R.id.text_tag_type);
+
+
         }
     }
 
@@ -42,7 +47,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
         LinearLayout bitsContainer;
         public DiscreteTagViewHolder(View view){
             super(view);
-            view.findViewById(R.id.discrete_visualization).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.bits_container).setVisibility(View.VISIBLE);
             view.findViewById(R.id.analog_visualization).setVisibility(View.GONE);
             bitsContainer = view.findViewById(R.id.bits_container);
         }
@@ -52,7 +57,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
         ProgressBar analogBar;
         public AnalogTagViewHolder(View view){
             super(view);
-            view.findViewById(R.id.discrete_visualization).setVisibility(View.GONE);
+            view.findViewById(R.id.bits_container).setVisibility(View.GONE);
             view.findViewById(R.id.analog_visualization).setVisibility(View.VISIBLE);
             analogBar = view.findViewById(R.id.analog_bar);
         }
@@ -83,19 +88,19 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TagViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull TagViewHolder holder, final int i) {
 
         holder.tagNameView.setText(mTagsList.get(i).getTagName());
-
         holder.tagAddressView.setText(mTagsList.get(i).getTagAddress());
         String tagValueString = "****";
+        holder.itemIndex = i;
         if (holder instanceof DiscreteTagViewHolder){
 
             holder.tagTypeView.setText("Discrete");
             if(mTagsList.get(i).doFoundOnPLC()){tagValueString = Integer
-                    .toBinaryString(mTagsList.get(i).getTagRawValue());}
+                    .toBinaryString(mTagsList.get(i).getTagRawValue());
             inflateBits(((DiscreteTagViewHolder) holder).bitsContainer,
-                    ((DiscreteTag)mTagsList.get(i)).getChildes());
+                    ((DiscreteTag)mTagsList.get(i)).getChildes());}
         }
         else if (holder instanceof AnalogTagViewHolder){
             holder.tagTypeView.setText("Analog");
@@ -103,8 +108,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
                 tagValueString = String.valueOf(mTagsList.get(i).getTagRawValue());
                 ((AnalogTagViewHolder)holder).analogBar.setProgress(((AnalogTag) mTagsList.get(i)).getPercentage());
                 ((AnalogTag) mTagsList.get(i)).getScaledValue();
-            }
-
+            }else{((AnalogTagViewHolder)holder).analogBar.setProgress(0);}
         }
         holder.tagValueView.setText(tagValueString);
 

@@ -7,13 +7,20 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,9 +33,9 @@ import org.systems.bluelink.plclink.BluetoothService.BtListenerThread;
 import org.systems.bluelink.plclink.data.tagItems.AnalogTag;
 import org.systems.bluelink.plclink.data.tagItems.BaseTag;
 import org.systems.bluelink.plclink.data.tagItems.DiscreteTag;
+import org.systems.bluelink.plclink.NewSystemDialogFragment.NoticeDialogListener;
 
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     static final String DEVICE_NAME = "HC-05";
 
@@ -36,76 +43,89 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MY_APP_DEBUG_TAG";
     public static Handler mainHandler;
     static BluetoothAdapter bluetoothAdapter;
-    static TextView mainText;
     static boolean connectedToDevice = false;
-    static BluetoothSocket mmSocket;
     static StringBuilder stringBuilder;
-    static EditText inputTextField;
     RecyclerView tagsListView;
-    TagsAdapter tagsAdapter;
+    static TagsAdapter tagsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //Handle passed extras
+        DataKeeper.setCurrentSystemIndex(
+                getIntent().getIntExtra("CURRENT SYSTEM",0));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //set title to match system data
+            setTitle(DataKeeper.getCurrentSystem().getSystemLocation() +" " +
+                DataKeeper.getCurrentSystem().getSystemName());
 
         //initializing bluetooth adapter from framework
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 
         //finding views by id
-        mainText = findViewById(R.id.main_text);
-        inputTextField = findViewById(R.id.main_edit_text);
+
         tagsListView = findViewById(R.id.list_view);
 
         //initialize globals
+        DataKeeper.stripOldUpdateStatus();
         tagsAdapter = new TagsAdapter(this, DataKeeper.globalTagList);
         tagsListView.setAdapter(tagsAdapter);
-        tagsListView.setLayoutManager(new LinearLayoutManager(this));
+        tagsListView.setLayoutManager(new GridLayoutManager(this,1));
         mainHandler = new MainHandler();
 
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT){
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                        TagsAdapter.TagViewHolder mViewHolder = (TagsAdapter.TagViewHolder) viewHolder;
+//                        DataKeeper.globalTagList.remove( mViewHolder.itemIndex);
+//                        tagsAdapter.notifyItemRemoved( mViewHolder.itemIndex);
+                        Intent intent = new Intent(MainActivity.this, TagEditActivity.class);
+                        intent.putExtra("CURRENT TAG", mViewHolder.itemIndex);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                        return false;
+                    }
+                }
+        );
+
+        itemTouchHelper.attachToRecyclerView(tagsListView);
         //connecting to bluetooth device using helper method
         BluetoothDevice btDevice = BluetoothService.findBTdevice(DEVICE_NAME, this);
         if(btDevice != null){
         connectToDevice(btDevice);}
 
-        //setting on click listeners
-        findViewById(R.id.send_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                String inputText = inputTextField.getText().toString();
-                BluetoothService.send(inputText);
-            }
-        });
+//        findViewById(R.id.add_button).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                String newTagAddress = ((EditText) findViewById(R.id.address_edit_text)).getText().toString();
+//                String newTagName = ((EditText) findViewById(R.id.name_edit_text)).getText().toString();
+//                String newTagType = ((EditText) findViewById(R.id.type_edit_text)).getText().toString();
+//                boolean added = false;
+//                switch (Integer.valueOf(newTagType)){
+//                    case BaseTag.DATA_TYPE_DISCRETE:
+//                        added = DataKeeper.addToGlobalTagList(new DiscreteTag(newTagAddress,newTagName, 16));
+//                        break;
+//                    case BaseTag.DATA_TYPE_ANALOG:
+//                        added = DataKeeper.addToGlobalTagList(new AnalogTag(newTagAddress,newTagName));
+//                        break;
+//                }
+//                if(added){
+//                tagsAdapter.notifyDataSetChanged();
+//                Toast.makeText(MainActivity.this, "tag added successfully", Toast.LENGTH_LONG).show();
+//                }else{Toast.makeText(MainActivity.this, "tag already exists", Toast.LENGTH_LONG).show();}
+//            }
+//        });
 
-
-        findViewById(R.id.add_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String newTagAddress = ((EditText) findViewById(R.id.address_edit_text)).getText().toString();
-                String newTagName = ((EditText) findViewById(R.id.name_edit_text)).getText().toString();
-                String newTagType = ((EditText) findViewById(R.id.type_edit_text)).getText().toString();
-                switch (Integer.valueOf(newTagType)){
-                    case BaseTag.DATA_TYPE_DISCRETE:
-                        DataKeeper.addToGlobalTagList(new DiscreteTag(newTagAddress,newTagName, 16));
-                        break;
-                    case BaseTag.DATA_TYPE_ANALOG:
-                        DataKeeper.addToGlobalTagList(new AnalogTag(newTagAddress,newTagName));
-                        break;
-                }
-                tagsAdapter.notifyDataSetChanged();
-            }
-        });
-        findViewById(R.id.refresh_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                new ReadTableUpdater(DataKeeper.globalTagList).start();
-
-            }
-        });
     }
 
     /**
@@ -121,9 +141,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //free up bluetooth to be able to use next time and by other apps
+        Toast.makeText(this, "Main destroyed",Toast.LENGTH_SHORT).show();
         BluetoothService.disconnectBT();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tagsAdapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -138,30 +164,24 @@ public class MainActivity extends AppCompatActivity {
                 case MessageType.CONNECTED:
                     connectedToDevice = true;
                     stringBuilder = new StringBuilder("Connected \n");
-                    mainText.setText(stringBuilder.toString());
-                    mmSocket = (BluetoothSocket) msg.obj;
-                    Thread connectedThread = new BtListenerThread(mmSocket);
-                    connectedThread.start();
-
+                    DataKeeper.buildReadTable();
+                    Thread btListenerThread = new BtListenerThread();
+                    btListenerThread.start();
                     break;
                 case MessageType.DISCONNECTED:
-                    connectedToDevice = true;
-                    mainText.setText("Disconnected");
+                    connectedToDevice = false;
                     BluetoothService.disconnectBT();
                     break;
                 case MessageType.WRITE:
                     stringBuilder.append("\n sent: "+ msg.obj);
-                    mainText.setText(stringBuilder.toString());
-                    inputTextField.setText("");
                     break;
 
                 case MessageType.READ:
                     String string= (String) msg.obj;
                     Log.d("received from BT: ", string);
-                    DataKeeper.handleReceivedUpdate(string, tagsAdapter);
+                    DataKeeper.handleReceivedUpdate(string);
                     tagsAdapter.notifyDataSetChanged();
                     stringBuilder.append("\n received: "+ string);
-                    mainText.setText(stringBuilder.toString());
                     break;
 
                 case MessageType.TOAST:
@@ -169,6 +189,30 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this,toast,Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu options from the res/menu/menu_catalog.xml file.
+        // This adds menu items to the app bar.
+        getMenuInflater().inflate(R.menu.menu_projects, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // User clicked on a menu option in the app bar overflow menu
+        switch (item.getItemId()) {
+
+            case R.id.action_add_project:
+                Intent intent = new Intent(MainActivity.this, TagEditActivity.class);
+                startActivity(intent);
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

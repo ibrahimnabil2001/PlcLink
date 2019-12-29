@@ -1,5 +1,7 @@
 package org.systems.bluelink.plclink.data.tagItems;
 
+import java.lang.System;
+
 public class BaseTag {
 
     //declaring constants
@@ -33,8 +35,20 @@ public class BaseTag {
     public  long getLastSendTime() {return lastSendTime;}
     public  long getGlobalLastSendTime() {return globalLastSendTime;}
     public  int getNumberOfSend() {return numberOfSend;}
+    public  int getDataSize() {return mDataSize;}
 
     public void setValue(int newValue){mRawDataValue = newValue; mFoundOnPLC = true;}
     public void sentNow(){globalLastSendTime = lastSendTime = System.nanoTime(); numberOfSend++;}
+    public void setTagName(String newTagName){mTagName = newTagName;}
+    public void setTAgAddress(String newTAgAddress){mTagAddress = newTAgAddress;}
+
+
+    public void clearUpdateStatus(){
+        numberOfSend = 0;
+        globalLastSendTime = 0;
+        lastSendTime = 0;
+        mAddedToReadTable = false;
+        mFoundOnPLC = false;
+    }
 
 }
